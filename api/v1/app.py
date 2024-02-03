@@ -2,7 +2,7 @@
 """
 This module contains our first version of the api
 """
-from flask import Flask
+from flask import Flask, jsonify, make_response
 from models import storage
 from api.v1.views import app_views
 import os
@@ -14,6 +14,11 @@ app.register_blueprint(app_views)
 def closing(exception):
     """tear down method"""
     storage.close()
+
+@app.errorhandler(404)
+def not_found(error):
+    """Not found method"""
+    return make_response(jsonify({"error": "Not found"}), 404)
 
 
 if __name__ == "__main__":
