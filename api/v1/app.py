@@ -15,6 +15,7 @@ def closing(exception):
     """tear down method"""
     storage.close()
 
+
 @app.errorhandler(404)
 def not_found(error):
     """Not found method"""

@@ -19,7 +19,7 @@ def all_states():
     if request.method == 'POST':
         if not request.get_json():
             abort(400, 'Not a JSON')
-        if not 'name' in request.get_json():
+        if 'name' not in request.get_json():
             abort(400, 'Missing name')
         new_state = State(name=request.json['name'])
         storage.new(new_state)
@@ -42,4 +42,11 @@ def state_by_id(state_id):
         return make_response(jsonify({}), 200)
 
     if request.method == 'PUT':
-        pass
+        if not request.get_json():
+            abort(400, 'Not a JSON')
+        req_json = request.json
+        for key in req_json.keys():
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(state, key, req_json[key])
+        storage.save()
+        return make_response(jsonify(state.to_dict()), 200)
