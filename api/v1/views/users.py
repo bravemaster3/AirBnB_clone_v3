@@ -5,10 +5,11 @@ This module handles all default RESTful API actions related to users
 from models import storage
 from models.user import User
 from api.v1.views import app_views
-from flask import request, abort, jsonify, make_response
+from flask import request, abort, jsonify
 
 
-@app_views.route('/users/', methods=['GET', 'POST'])
+@app_views.route('/users', methods=['GET', 'POST'],
+                 strict_slashes=False)
 def all_users():
     """get a list of all users or creates a new user"""
     if request.method == 'GET':
@@ -31,10 +32,11 @@ def all_users():
             setattr(new_user, 'last_name', request.json['last_name'])
         storage.new(new_user)
         storage.save()
-        return make_response(jsonify(new_user.to_dict()), 201)
+        return jsonify(new_user.to_dict()), 201
 
 
-@app_views.route('/users/<user_id>', methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/users/<user_id>', methods=['GET', 'DELETE', 'PUT'],
+                 strict_slashes=False)
 def user_by_id(user_id):
     """get, updates or delete user with a specific id"""
     user = storage.get(User, user_id)
@@ -46,7 +48,7 @@ def user_by_id(user_id):
     if request.method == 'DELETE':
         storage.delete(user)
         storage.save()
-        return make_response(jsonify({}), 200)
+        return jsonify({}), 200
 
     if request.method == 'PUT':
         if not request.get_json():
@@ -56,4 +58,4 @@ def user_by_id(user_id):
             if key not in ['id', 'email', 'created_at', 'updated_at']:
                 setattr(user, key, req_json[key])
         storage.save()
-        return make_response(jsonify(user.to_dict()), 200)
+        return jsonify(user.to_dict()), 200

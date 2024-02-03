@@ -5,10 +5,11 @@ This module handles all default RESTful API actions related to states
 from models import storage
 from models.state import State
 from api.v1.views import app_views
-from flask import request, abort, jsonify, make_response
+from flask import request, abort, jsonify
 
 
-@app_views.route('/states/', methods=['GET', 'POST'])
+@app_views.route('/states', methods=['GET', 'POST'],
+                 strict_slashes=False)
 def all_states():
     """get a list of all states or creates a new state"""
     if request.method == 'GET':
@@ -24,10 +25,11 @@ def all_states():
         new_state = State(name=request.json['name'])
         storage.new(new_state)
         storage.save()
-        return make_response(jsonify(new_state.to_dict()), 201)
+        return jsonify(new_state.to_dict()), 201
 
 
-@app_views.route('/states/<state_id>', methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/states/<state_id>', methods=['GET', 'DELETE', 'PUT'],
+                 strict_slashes=False)
 def state_by_id(state_id):
     """get, updates or delete state with a specific id"""
     state = storage.get(State, state_id)
@@ -39,7 +41,7 @@ def state_by_id(state_id):
     if request.method == 'DELETE':
         storage.delete(state)
         storage.save()
-        return make_response(jsonify({}), 200)
+        return jsonify({}), 200
 
     if request.method == 'PUT':
         if not request.get_json():
@@ -49,4 +51,4 @@ def state_by_id(state_id):
             if key not in ['id', 'created_at', 'updated_at']:
                 setattr(state, key, req_json[key])
         storage.save()
-        return make_response(jsonify(state.to_dict()), 200)
+        return jsonify(state.to_dict()), 200
