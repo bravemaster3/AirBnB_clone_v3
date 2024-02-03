@@ -6,11 +6,11 @@ from models import storage
 from models.state import State
 from models.city import City
 from api.v1.views import app_views
-from flask import request, abort, jsonify, make_response
+from flask import request, abort, jsonify
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'])
-@app_views.route('/states/<state_id>/cities/', methods=['GET', 'POST'])
+@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'],
+                 strict_slashes=False)
 def all_cities(state_id):
     """get a list of all cities of a state or creates a new City"""
     state = storage.get(State, state_id)
@@ -29,10 +29,11 @@ def all_cities(state_id):
         new_city = City(state_id=state_id, name=request.json['name'])
         storage.new(new_city)
         storage.save()
-        return make_response(jsonify(new_city.to_dict()), 201)
+        return jsonify(new_city.to_dict()), 201
 
 
-@app_views.route('/cities/<city_id>', methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/cities/<city_id>', methods=['GET', 'DELETE', 'PUT'],
+                 strict_slashes=False)
 def city_by_id(city_id):
     """get, updates or delete city with a specific id"""
     city = storage.get(City, city_id)
@@ -44,7 +45,7 @@ def city_by_id(city_id):
     if request.method == 'DELETE':
         storage.delete(city)
         storage.save()
-        return make_response(jsonify({}), 200)
+        return jsonify({}), 200
 
     if request.method == 'PUT':
         if not request.get_json():
@@ -54,4 +55,4 @@ def city_by_id(city_id):
             if key not in ['id', 'state_id', 'created_at', 'updated_at']:
                 setattr(city, key, req_json[key])
         storage.save()
-        return make_response(jsonify(city.to_dict()), 200)
+        return jsonify(city.to_dict()), 200

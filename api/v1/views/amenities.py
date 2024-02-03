@@ -5,10 +5,11 @@ This module handles all default RESTful API actions related to amenities
 from models import storage
 from models.amenity import Amenity
 from api.v1.views import app_views
-from flask import request, abort, jsonify, make_response
+from flask import request, abort, jsonify
 
 
-@app_views.route('/amenities/', methods=['GET', 'POST'])
+@app_views.route('/amenities', methods=['GET', 'POST'],
+                 strict_slashes=False)
 def all_amenities():
     """get a list of all amenities or creates a new amenity"""
     if request.method == 'GET':
@@ -24,10 +25,11 @@ def all_amenities():
         new_amenity = Amenity(name=request.json['name'])
         storage.new(new_amenity)
         storage.save()
-        return make_response(jsonify(new_amenity.to_dict()), 201)
+        return jsonify(new_amenity.to_dict()), 201
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/amenities/<amenity_id>', methods=['GET', 'DELETE', 'PUT'],
+                 strict_slashes=False)
 def amenity_by_id(amenity_id):
     """get, updates or delete amenity with a specific id"""
     amenity = storage.get(Amenity, amenity_id)
@@ -39,7 +41,7 @@ def amenity_by_id(amenity_id):
     if request.method == 'DELETE':
         storage.delete(amenity)
         storage.save()
-        return make_response(jsonify({}), 200)
+        return jsonify({}), 200
 
     if request.method == 'PUT':
         if not request.get_json():
@@ -49,4 +51,4 @@ def amenity_by_id(amenity_id):
             if key not in ['id', 'created_at', 'updated_at']:
                 setattr(amenity, key, req_json[key])
         storage.save()
-        return make_response(jsonify(amenity.to_dict()), 200)
+        return jsonify(amenity.to_dict()), 200

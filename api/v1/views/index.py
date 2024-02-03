@@ -15,13 +15,13 @@ classes = {"amenities": Amenity, "cities": City, "places": Place,
            "reviews": Review, "states": State, "users": User}
 
 
-@app_views.route('/status')
+@app_views.route('/status', strict_slashes=False)
 def api_status():
     """returns the status of the api"""
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
+@app_views.route('/stats', strict_slashes=False)
 def stats():
     """returns the stats of all classes"""
     stats_dict = {k: storage.count(v) for k, v in classes.items()}
