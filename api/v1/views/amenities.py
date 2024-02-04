@@ -45,11 +45,12 @@ def amenity_by_id(amenity_id):
         return jsonify({}), 200
 
     if request.method == 'PUT':
-        if not request.get_json():
+        try:
+            amenity_dict = request.get_json()
+        except Exception:
             abort(400, 'Not a JSON')
-        req_json = request.json
-        for key in req_json.keys():
+        for key, value in amenity_dict.items():
             if key not in ['id', 'created_at', 'updated_at']:
-                setattr(amenity, key, req_json[key])
-        storage.save()
+                setattr(amenity, key, value)
+        amenity.save()
         return jsonify(amenity.to_dict()), 200
