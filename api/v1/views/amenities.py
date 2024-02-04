@@ -15,16 +15,17 @@ def all_amenities():
     if request.method == 'GET':
         all_amenities = storage.all(Amenity)
         amenities_list = [obj.to_dict() for obj in all_amenities.values()]
-        return amenities_list
+        return jsonify(amenities_list)
 
     if request.method == 'POST':
-        if not request.get_json():
+        try:
+            amenity_dict = request.get_json()
+        except Exception:
             abort(400, 'Not a JSON')
-        if 'name' not in request.get_json():
+        if 'name' not in amenity_dict:
             abort(400, 'Missing name')
-        new_amenity = Amenity(name=request.json['name'])
-        storage.new(new_amenity)
-        storage.save()
+        new_amenity = Amenity(**amenity_dict)
+        new_amenity.save()
         return jsonify(new_amenity.to_dict()), 201
 
 
@@ -36,7 +37,7 @@ def amenity_by_id(amenity_id):
     if not amenity:
         abort(404)
     if request.method == 'GET':
-        return amenity.to_dict()
+        return jsonify(amenity.to_dict())
 
     if request.method == 'DELETE':
         storage.delete(amenity)
@@ -44,11 +45,12 @@ def amenity_by_id(amenity_id):
         return jsonify({}), 200
 
     if request.method == 'PUT':
-        if not request.get_json():
+        try:
+            amenity_dict = request.get_json()
+        except Exception:
             abort(400, 'Not a JSON')
-        req_json = request.json
-        for key in req_json.keys():
+        for key, value in amenity_dict.items():
             if key not in ['id', 'created_at', 'updated_at']:
-                setattr(amenity, key, req_json[key])
-        storage.save()
+                setattr(amenity, key, value)
+        amenity.save()
         return jsonify(amenity.to_dict()), 200

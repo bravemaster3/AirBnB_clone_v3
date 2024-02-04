@@ -15,7 +15,7 @@ def all_users():
     if request.method == 'GET':
         all_users = storage.all(User)
         users_list = [obj.to_dict() for obj in all_users.values()]
-        return users_list
+        return jsonify(users_list)
 
     if request.method == 'POST':
         if not request.get_json():
@@ -43,7 +43,7 @@ def user_by_id(user_id):
     if not user:
         abort(404)
     if request.method == 'GET':
-        return user.to_dict()
+        return jsonify(user.to_dict())
 
     if request.method == 'DELETE':
         storage.delete(user)

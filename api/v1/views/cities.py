@@ -19,7 +19,7 @@ def all_cities(state_id):
     if request.method == 'GET':
         all_cities = state.cities
         cities_list = [obj.to_dict() for obj in all_cities]
-        return cities_list
+        return jsonify(cities_list)
 
     if request.method == 'POST':
         if not request.get_json():
@@ -40,7 +40,7 @@ def city_by_id(city_id):
     if not city:
         abort(404)
     if request.method == 'GET':
-        return city.to_dict()
+        return jsonify(city.to_dict())
 
     if request.method == 'DELETE':
         storage.delete(city)
