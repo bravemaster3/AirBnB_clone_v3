@@ -18,13 +18,14 @@ def all_amenities():
         return jsonify(amenities_list)
 
     if request.method == 'POST':
-        if not request.get_json():
+        try:
+            amenity_dict = request.get_json()
+        except Exception:
             abort(400, 'Not a JSON')
-        if 'name' not in request.get_json():
+        if 'name' not in amenity_dict:
             abort(400, 'Missing name')
-        new_amenity = Amenity(name=request.json['name'])
-        storage.new(new_amenity)
-        storage.save()
+        new_amenity = Amenity(**amenity_dict)
+        new_amenity.save()
         return jsonify(new_amenity.to_dict()), 201
 
 
