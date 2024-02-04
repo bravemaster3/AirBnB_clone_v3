@@ -18,9 +18,8 @@ def all_amenities():
         return jsonify(amenities_list)
 
     if request.method == 'POST':
-        try:
-            amenity_dict = request.get_json()
-        except Exception:
+        amenity_dict = request.get_json()
+        if not amenity_dict:
             abort(400, 'Not a JSON')
         if 'name' not in amenity_dict:
             abort(400, 'Missing name')
@@ -45,9 +44,8 @@ def amenity_by_id(amenity_id):
         return jsonify({}), 200
 
     if request.method == 'PUT':
-        try:
-            amenity_dict = request.get_json()
-        except Exception:
+        amenity_dict = request.get_json()
+        if not amenity_dict:
             abort(400, 'Not a JSON')
         for key, value in amenity_dict.items():
             if key not in ['id', 'created_at', 'updated_at']:
