@@ -28,7 +28,7 @@ def all_places(city_id):
             abort(400, 'Not a JSON')
         if 'user_id' not in place_dict:
             abort(400, 'Missing user_id')
-        if not storage.get(User, getattr(place_dict, 'user_id')):
+        if not storage.get(User, request.json['user_id']):
             abort(404)
         if 'name' not in place_dict:
             abort(400, 'Missing name')
