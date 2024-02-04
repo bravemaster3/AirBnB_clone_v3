@@ -15,7 +15,7 @@ def all_states():
     if request.method == 'GET':
         all_states = storage.all(State)
         states_list = [obj.to_dict() for obj in all_states.values()]
-        return states_list
+        return jsonify(states_list)
 
     if request.method == 'POST':
         if not request.get_json():
@@ -36,7 +36,7 @@ def state_by_id(state_id):
     if not state:
         abort(404)
     if request.method == 'GET':
-        return state.to_dict()
+        return jsonify(state.to_dict())
 
     if request.method == 'DELETE':
         storage.delete(state)
