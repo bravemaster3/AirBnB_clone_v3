@@ -163,4 +163,11 @@ Public Domain. No copy write protection.
 
 Third part of Aribnb: Patience Otuke and Koffi Dodji Noumonvi
 ## API creation with flask
-TBC
+Handled endpoints:
++ /api/v1/states
++ /api/v1/states/<state_id>/cities
++ /api/v1/cities/<city_id>
++ /api/v1/users
++ /api/places/<place_id>/amenities
++ /api/amenities/<amenity_id>
+And many more ...
