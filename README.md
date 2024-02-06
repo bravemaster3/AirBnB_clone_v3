@@ -170,4 +170,4 @@ Handled endpoints:
 + /api/v1/users
 + /api/places/<place_id>/amenities
 + /api/amenities/<amenity_id>
-And many more ...
+And many more ... seriously, the list is endless
